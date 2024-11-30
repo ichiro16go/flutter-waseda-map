@@ -7,6 +7,7 @@ Future<Position> getCurrentPosition() async {
   if (!serviceEnabled) {
     return Future.error('Location services are disabled.');
   }
+
   return await Geolocator.getCurrentPosition();
 }
 

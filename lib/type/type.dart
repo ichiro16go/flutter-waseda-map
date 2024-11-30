@@ -41,6 +41,8 @@ class EventPhotos {
 class Store {
   final String id;
   final String name;
+  final String address;
+  final String password;
   final String place;
   final String? description;
   final File? photo;
@@ -50,6 +52,8 @@ class Store {
   Store({
     required this.id,
     required this.name,
+    required this.address,
+    required this.password,
     required this.place,
     this.description,
     required this.photo,
@@ -61,6 +65,8 @@ class Store {
 class Customer {
   final String id;
   final String name;
+  final String address;
+  final String password;
   final String description;
   final String? university;
   final int? grade;
@@ -70,6 +76,8 @@ class Customer {
   Customer({
     required this.id,
     required this.name,
+    required this.address,
+    required this.password,
     required this.description,
     this.university,
     this.grade,
