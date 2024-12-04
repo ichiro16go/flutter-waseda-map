@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:latlong2/latlong.dart';
+
 class Event {
   final String id;
   final String title;
   final DateTime startDate;
   final DateTime endDate;
-  final String? place;
+  final LatLng? place;
   final String? type;
   final String? detail;
   final String storeId;
@@ -29,12 +31,12 @@ class Event {
 class EventPhotos {
   final String id;
   final String eventId;
-  final File photoContents;
+  final String? photoContents;
 
   EventPhotos({
     required this.id,
     required this.eventId,
-    required this.photoContents,
+    this.photoContents,
   });
 }
 
@@ -43,9 +45,9 @@ class Store {
   final String name;
   final String address;
   final String password;
-  final String place;
+  final LatLng place;
   final String? description;
-  final File? photo;
+  final String? photo;
   final String? instagramId;
   final String? twitterId;
 
@@ -71,7 +73,7 @@ class Customer {
   final String? university;
   final int? grade;
   final String? faculty;
-  final File? photo;
+  final String? photo;
 
   Customer({
     required this.id,
