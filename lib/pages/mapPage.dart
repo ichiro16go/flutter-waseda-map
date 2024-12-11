@@ -1,71 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import '../utils/position.dart';
-import 'package:geolocator/geolocator.dart';
-import '../compornents/searchBox.dart';
+import 'package:provider/provider.dart';
+import '../viewmodels/mapController.dart';
 
-class MapPage extends StatefulWidget {
+class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
   @override
-  _MapPageState createState() => _MapPageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => MapViewModel(),
+      child: const _MapPageContent(),
+    );
+  }
 }
 
-class _MapPageState extends State<MapPage> {
-  LatLng currentLocation = LatLng(0, 0);
-  late MapController mapController;
-
-  @override
-  void initState() {
-    super.initState();
-    getCurrentPosition();
-    mapController = MapController();
-  }
-
-  void getCurrentPosition() async {
-    var serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('位置情報サービスが無効です。');
-    }
-
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('位置情報のパーミッションが拒否されました。');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('位置情報のパーミッションが永久に拒否されました。');
-    }
-
-    var position = await Geolocator.getCurrentPosition();
-    setState(() {
-      currentLocation = LatLng(position.latitude, position.longitude);
-    });
-  }
+class _MapPageContent extends StatelessWidget {
+  const _MapPageContent();
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<MapViewModel>(context);
+    
     return Scaffold(
       body: Stack(
         children: [
           FlutterMap(
-            mapController: mapController,
+            mapController: viewModel.mapController,
             options: MapOptions(
-              initialCenter: currentLocation,
+              initialCenter: viewModel.currentLocation,
               initialZoom: 18.0,
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              ),
+              MarkerLayer(
+                markers: viewModel.markers,
               ),
               CircleLayer<Object>(
                 circles: [
                   CircleMarker<Object>(
-                    point: currentLocation,
+                    point: viewModel.currentLocation,
                     color: Colors.blue,
                     radius: 10,
                   ),
@@ -74,18 +51,15 @@ class _MapPageState extends State<MapPage> {
             ],
           ),
           const Positioned(
-            top: 20, // 適宜調整してください
-            left: 20, // 適宜調整してください
-            right: 20, // 適宜調整してください
+            top: 20,
+            left: 20,
+            right: 20,
             child: SearchBar(),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          getCurrentPosition();
-          mapController.move(currentLocation, 18.0);
-        },
+        onPressed: viewModel.moveToCurrentLocation,
         child: const Icon(Icons.my_location),
       ),
     );
