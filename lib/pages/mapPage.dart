@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../utils/position.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -14,6 +16,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   late LatLng currentLocation;
   late MapController mapController;
+  final List<Marker> markers = [];
 
   @override
   void initState() {
@@ -48,6 +51,74 @@ class _MapPageState extends State<MapPage> {
     var position = await Geolocator.getCurrentPosition();
     setState(() {
       currentLocation = LatLng(position.latitude, position.longitude);
+      addMarkers();
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> fetchRestaurants(double south, double west, double north, double east) async {
+    // Overpass APIのエンドポイント
+    final url = Uri.parse('https://overpass-api.de/api/interpreter');
+
+    // Overpass APIクエリ
+    final query = '''
+    [out:json];
+    node["amenity"="restaurant"]($south,$west,$north,$east);
+    out body;
+    ''';
+
+    // APIリクエスト
+    final response = await http.post(url, body: {'data': query});
+
+    // 結果をパース
+    if (response.statusCode == 200) {
+      final data = json.decode(utf8.decode(response.bodyBytes));
+      final elements = data['elements'] as List;
+      // 必要な情報を抽出してリスト化
+      return elements
+          .map((element) => {
+                'id': element['id'],
+                'name': element['tags']?['name'] ?? 'Unnamed',
+                'cuisine': element['tags']?['cuisine'] ?? ['Unknown Cuisine'],
+                'lat': element['lat'],
+                'lon': element['lon'],
+              })
+          .toList();
+    } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
+
+  Future addMarkers() async{
+    final restaurants = await fetchRestaurants(currentLocation.latitude-0.004, currentLocation.longitude-0.004, currentLocation.latitude+0.004, currentLocation.longitude+0.004);
+
+    setState(() {
+      markers.addAll(
+        restaurants.map((restaurant) {
+          return Marker(
+            point: LatLng(restaurant['lat'], restaurant['lon']),
+            width: 80.0,
+            height: 80.0,
+            child: GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('店舗情報'),
+                  content: Text(
+                      '店名: ${restaurant['name']}\n系統: ${restaurant['cuisine']}\n座標: (${restaurant['lat']}, ${restaurant['lon']})'),
+                ),
+              );
+            },
+            child: const Icon(
+              Icons.location_on,
+              color: Colors.red,
+              size: 40.0,
+            ),
+          ),
+            
+          );
+        }).toList(),
+      );
     });
   }
 
@@ -74,10 +145,13 @@ class _MapPageState extends State<MapPage> {
               ),
             ],
           ),
+          MarkerLayer(
+            markers: markers,
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async{
           // 現在地を取得するロジックをここに実装
           getCurrentPosition();
           mapController.move(currentLocation, 18.0);
