@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "135356959595",
+    "project_id": "wasemap-ef30a",
+    "storage_bucket": "wasemap-ef30a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135356959595:android:5709fb0a0f540e332f1a2e",
+        "android_client_info": {
+          "package_name": "com.wasemap.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjsdCfiShr64gnqdEfotPMCuDzVP0sMo0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

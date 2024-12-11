@@ -5,8 +5,10 @@ import '../utils/position.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import '../viewmodels/mapController.dart';
 
-class MapPage extends StatefulWidget {
+class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
   @override
@@ -23,7 +25,13 @@ class _MapPageState extends State<MapPage> {
     super.initState();
     getCurrentPosition();
     mapController = MapController();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => MapViewModel(),
+      child: const _MapPageContent(),
+    );
   }
+}
 
   void getCurrentPosition() async {
     // 位置情報サービスが有効かどうかを確認
@@ -121,41 +129,60 @@ class _MapPageState extends State<MapPage> {
       );
     });
   }
+class _MapPageContent extends StatelessWidget {
+  const _MapPageContent();
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<MapViewModel>(context);
+    
     return Scaffold(
-      body: FlutterMap(
-        mapController: mapController,
-        options: MapOptions(
-          initialCenter: currentLocation,
-          initialZoom: 18.0,
-        ),
+      body: Stack(
         children: [
-          TileLayer(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          ),
-          CircleLayer<Object>(
-            circles: [
-              CircleMarker<Object>(
-                //現在地アイコン
-                point: currentLocation,
-                color: Colors.blue,
-                radius: 10,
+          FlutterMap(
+            mapController: viewModel.mapController,
+            options: MapOptions(
+              initialCenter: viewModel.currentLocation,
+              initialZoom: 18.0,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              ),
+              MarkerLayer(
+                markers: viewModel.markers,
+              ),
+              CircleLayer<Object>(
+                circles: [
+                  CircleMarker<Object>(
+                    point: viewModel.currentLocation,
+                    color: Colors.blue,
+                    radius: 10,
+                  ),
+                ],
               ),
             ],
           ),
           MarkerLayer(
             markers: markers,
+          const Positioned(
+            top: 20,
+            left: 20,
+            right: 20,
+            child: SearchBar(),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
+
         onPressed: () async{
           // 現在地を取得するロジックをここに実装
           getCurrentPosition();
           mapController.move(currentLocation, 18.0);
         },
+        onPressed: viewModel.moveToCurrentLocation,
+
         child: const Icon(Icons.my_location),
       ),
     );
