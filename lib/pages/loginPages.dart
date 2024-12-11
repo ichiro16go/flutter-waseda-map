@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                       )
                     ).user;
                     if (user != null) {
-                      print('Succeded in logging in!');
+                      print('Succeded in logging in!\n hello, ${user.uid}');
                     }
                   } catch (e) {
                     print(e);
