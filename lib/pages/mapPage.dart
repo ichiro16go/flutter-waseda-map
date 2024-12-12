@@ -17,6 +17,10 @@ class _MapPageState extends State<MapPage> {
   late LatLng currentLocation;
   late MapController mapController;
   final List<Marker> markers = [];
+  Map<String, dynamic>? selectedRestaurant;
+  var showBottomSheet = false;
+  var sheetPosition = 0.3;
+  final dragSensitivity = 600;
 
   @override
   void initState() {
@@ -100,14 +104,10 @@ class _MapPageState extends State<MapPage> {
             height: 80.0,
             child: GestureDetector(
             onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('店舗情報'),
-                  content: Text(
-                      '店名: ${restaurant['name']}\n系統: ${restaurant['cuisine']}\n座標: (${restaurant['lat']}, ${restaurant['lon']})'),
-                ),
-              );
+              setState(() {
+                selectedRestaurant = restaurant;
+                showBottomSheet = true;
+              });
             },
             child: const Icon(
               Icons.location_on,
@@ -125,31 +125,148 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FlutterMap(
-        mapController: mapController,
-        options: MapOptions(
-          initialCenter: currentLocation,
-          initialZoom: 18.0,
-        ),
+      body: Stack(
         children: [
-          TileLayer(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          ),
-          CircleLayer<Object>(
-            circles: [
-              CircleMarker<Object>(
-                //現在地アイコン
-                point: currentLocation,
-                color: Colors.blue,
-                radius: 10,
+          FlutterMap(
+            mapController: mapController,
+            options: MapOptions(
+              initialCenter: currentLocation,
+              initialZoom: 18.0,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              ),
+              CircleLayer<Object>(
+                circles: [
+                  CircleMarker<Object>(
+                    //現在地アイコン
+                    point: currentLocation,
+                    color: Colors.blue,
+                    radius: 10,
+                  ),
+                ],
+              ),
+              MarkerLayer(
+                markers: markers,
               ),
             ],
           ),
-          MarkerLayer(
-            markers: markers,
-          ),
+        if (showBottomSheet)
+            DraggableScrollableSheet(
+              initialChildSize: sheetPosition, // 初期高さ
+              minChildSize: 0.1, // 最小高さ
+              maxChildSize: 1.0, // 最大高さ
+              builder: (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Grabber(
+                        onVerticalDragUpdate: (DragUpdateDetails details) {
+                          setState(() {
+                            sheetPosition -= details.delta.dy / dragSensitivity;
+                            if (sheetPosition < 0.25) {
+                              sheetPosition = 0.25;
+                            }
+                            if (sheetPosition > 1.0) {
+                              sheetPosition = 1.0;
+                            }
+                          });
+                        },
+                        onVerticalDragEnd: (DragEndDetails details){
+                          setState(() {
+                            if (sheetPosition < 0.6){
+                              sheetPosition = 0.3;
+                            }else{
+                              sheetPosition = 0.95;
+                            }
+                          });
+                        },
+                      ),
+                      Expanded(
+                        child: ListView(
+                          controller: scrollController,
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                          children: [
+                            if (selectedRestaurant != null) ...[
+                              Text(
+                                selectedRestaurant!['name'],
+                                style: TextStyle(
+                                  fontSize: 25.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8.0),
+                              Row(
+                                children: [
+                                  ElevatedButton(
+                                    child: const Text('経路'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color.fromARGB(255, 81, 44, 242),
+                                      foregroundColor: Colors.white,
+                                      shape: const StadiumBorder(),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                  SizedBox(width: 8.0),
+                                  ElevatedButton(
+                                    child: const Text('共有'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: Colors.black,
+                                      shape: const StadiumBorder(),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8.0),
+                              Row(
+                                children: [
+                                  Container(
+                                    color: Colors.grey,
+                                    child: Text("Insert images here"),
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: 8.0),
+                              Text('系統: ${selectedRestaurant!['cuisine']}'),
+                              SizedBox(height: 8.0),
+                              Text('座標: (${selectedRestaurant!['lat']}, ${selectedRestaurant!['lon']})'),
+                              SizedBox(height: 16.0),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showBottomSheet = false;
+                                  });
+                                },
+                                child: Text('閉じる'),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
         ],
       ),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: () async{
           // 現在地を取得するロジックをここに実装
@@ -157,6 +274,44 @@ class _MapPageState extends State<MapPage> {
           mapController.move(currentLocation, 18.0);
         },
         child: const Icon(Icons.my_location),
+      ),
+    );
+  }
+}
+
+class Grabber extends StatelessWidget {
+  const Grabber({
+    super.key,
+    required this.onVerticalDragUpdate,
+    required this.onVerticalDragEnd,
+  });
+
+  final ValueChanged<DragUpdateDetails> onVerticalDragUpdate;
+  final ValueChanged<DragEndDetails> onVerticalDragEnd;
+
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      onVerticalDragUpdate: onVerticalDragUpdate,
+      onVerticalDragEnd: onVerticalDragEnd,
+      child: Container(
+        width: double.infinity,
+        color: Colors.white,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            width: 32.0,
+            height: 4.0,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
       ),
     );
   }
