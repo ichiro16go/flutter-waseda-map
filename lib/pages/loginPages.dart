@@ -1,9 +1,5 @@
-// login with original email&password
-// login with gmail address
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 // import 'firebase_options.dart';
 
@@ -64,9 +60,9 @@ class _LoginPageState extends State<LoginPage> {
                         password: _password
                       )
                     ).user;
-                    if (user != null) {
-                      print('Succeded in logging in!\n hello, ${user.uid}');
-                    }
+                    if (user == null) return;
+                    
+                    print('Succeded in logging in!\n hello, ${user.uid}');
                   } catch (e) {
                     print(e);
                   }
@@ -77,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () async {
                   GoogleSignInAccount? account = await _googleSignin.signIn();
                   if (account == null) return;
+
                   GoogleSignInAuthentication authentication = await account.authentication;
                   final OAuthCredential credential = GoogleAuthProvider.credential(
                     idToken: authentication.idToken,
@@ -87,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                   ).user;
                   if (user == null) return;
                   
+                  print('succeeded in logging in with Google account: ${user.uid}');
                   setState(() {
                     // change Scene
                   });
