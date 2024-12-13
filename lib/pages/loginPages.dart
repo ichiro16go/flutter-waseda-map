@@ -90,24 +90,24 @@ class _LoginPageState extends State<LoginPage> {
                   });
                 }, 
               ),
-              // ElevatedButton( // for new user resisration.
-              //   child: const Text('User resisration'),
-              //   onPressed: () async {
-              //     try {
-              //       final User? user = (
-              //         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-              //           email: _email, 
-              //           password: _password
-              //         )
-              //       ).user;
-              //       if (user != null) {
-              //         print("Succeeded in resitering you as our user!\n email: ${user.email}, id: ${user.uid}");
-              //       }
-              //     } catch (e) {
-              //       print(e);
-              //     }
-              //   }
-              // )
+              ElevatedButton( // for new user resisration.
+                child: const Text('User resisration'),
+                onPressed: () async {
+                  try {
+                    final User? user = (
+                      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                        email: _email, 
+                        password: _password
+                      )
+                    ).user;
+                    if (user != null) {
+                      print("Succeeded in resitering you as our user!\n email: ${user.email}, id: ${user.uid}");
+                    }
+                  } catch (e) {
+                    print(e);
+                  }
+                }
+              )
             ],
 
           ),
