@@ -16,9 +16,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("タイムライン"),
-      ),
       body: ListView.builder(
         itemCount: _posts.length,
         itemBuilder: (context, index) {

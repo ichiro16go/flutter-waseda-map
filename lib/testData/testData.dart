@@ -14,8 +14,8 @@ class Testdata {
     type: 'Conference',
     detail: 'A sample event for testing.',
     storeId: 'store1',
-    twitterPost: 'https://twitter.com/sample1',
-    instagramPost: 'https://instagram.com/sample1',
+    twitter: 'sample1',
+    instagram: 'sample1',
   ),
   Event(
     id: '2',
@@ -26,8 +26,8 @@ class Testdata {
     type: 'Workshop',
     detail: 'Another sample event for testing.',
     storeId: 'store2',
-    twitterPost: 'https://twitter.com/sample2',
-    instagramPost: 'https://instagram.com/sample2',
+    twitter: 'sample2',
+    instagram: 'sample2',
   ),
   Event(
     id: '3',
@@ -38,8 +38,8 @@ class Testdata {
     type: 'Seminar',
     detail: 'A third sample event for testing.',
     storeId: 'store3',
-    twitterPost: 'https://twitter.com/sample3',
-    instagramPost: 'https://instagram.com/sample3',
+    twitter: 'sample3',
+    instagram: 'sample3',
   ),
   Event(
     id: '4',
@@ -50,8 +50,8 @@ class Testdata {
     type: 'Exhibition',
     detail: 'A fourth sample event for testing.',
     storeId: 'store4',
-    twitterPost: 'https://twitter.com/sample4',
-    instagramPost: 'https://instagram.com/sample4',
+    twitter: 'sample4',
+    instagram: 'sample4',
   ),
   Event(
     id: '5',
@@ -62,8 +62,8 @@ class Testdata {
     type: 'Meetup',
     detail: 'A fifth sample event for testing.',
     storeId: 'store5',
-    twitterPost: 'https://twitter.com/sample5',
-    instagramPost: 'https://instagram.com/sample5',
+    twitter: 'sample5',
+    instagram: 'sample5',
   ),
   Event(
     id: '6',
@@ -74,8 +74,8 @@ class Testdata {
     type: 'Festival',
     detail: 'A sixth sample event for testing. aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
     storeId: 'store6',
-    twitterPost: 'https://twitter.com/sample6',
-    instagramPost: 'https://instagram.com/sample6',
+    twitter: 'sample6',
+    instagram: 'sample6',
   ),
   Event(
     id: '7',
@@ -86,8 +86,8 @@ class Testdata {
     type: 'Competition',
     detail: 'A seventh sample event for testing.',
     storeId: 'store7',
-    twitterPost: 'https://twitter.com/sample7',
-    instagramPost: 'https://instagram.com/sample7',
+    twitter: 'sample7',
+    instagram: 'sample7',
   ),
 ];
 

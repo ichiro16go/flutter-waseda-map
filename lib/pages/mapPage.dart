@@ -28,7 +28,7 @@ class _MapPageState extends State<MapPage> {
     getCurrentPosition();
     mapController = MapController();
   }
-
+//現在地情報の取得
   void getCurrentPosition() async {
     // 位置情報サービスが有効かどうかを確認
     var serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -45,11 +45,11 @@ class _MapPageState extends State<MapPage> {
         return Future.error('位置情報のパーミッションが拒否されました。');
       }
     }
-    
+
     if (permission == LocationPermission.deniedForever) {
       // パーミッションが永久に拒否された場合はエラー
       return Future.error('位置情報のパーミッションが永久に拒否されました。');
-    } 
+    }
 
     // 現在の位置を取得
     var position = await Geolocator.getCurrentPosition();
@@ -59,7 +59,9 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> fetchRestaurants(double south, double west, double north, double east) async {
+//レストランの情報取得
+  Future<List<Map<String, dynamic>>> fetchRestaurants(
+      double south, double west, double north, double east) async {
     // Overpass APIのエンドポイント
     final url = Uri.parse('https://overpass-api.de/api/interpreter');
 
@@ -92,8 +94,13 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  Future addMarkers() async{
-    final restaurants = await fetchRestaurants(currentLocation.latitude-0.004, currentLocation.longitude-0.004, currentLocation.latitude+0.004, currentLocation.longitude+0.004);
+//マーカーの追加
+  Future addMarkers() async {
+    final restaurants = await fetchRestaurants(
+        currentLocation.latitude - 0.004,
+        currentLocation.longitude - 0.004,
+        currentLocation.latitude + 0.004,
+        currentLocation.longitude + 0.004);
 
     setState(() {
       markers.addAll(
@@ -103,19 +110,18 @@ class _MapPageState extends State<MapPage> {
             width: 80.0,
             height: 80.0,
             child: GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedRestaurant = restaurant;
-                showBottomSheet = true;
-              });
-            },
-            child: const Icon(
-              Icons.location_on,
-              color: Colors.red,
-              size: 40.0,
+              onTap: () {
+                setState(() {
+                  selectedRestaurant = restaurant;
+                  showBottomSheet = true;
+                });
+              },
+              child: const Icon(
+                Icons.location_on,
+                color: Colors.red,
+                size: 40.0,
+              ),
             ),
-          ),
-            
           );
         }).toList(),
       );
@@ -125,6 +131,7 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: Stack(
         children: [
           FlutterMap(
@@ -135,7 +142,8 @@ class _MapPageState extends State<MapPage> {
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
               ),
               CircleLayer<Object>(
                 circles: [
@@ -152,12 +160,13 @@ class _MapPageState extends State<MapPage> {
               ),
             ],
           ),
-        if (showBottomSheet)
+          if (showBottomSheet)
             DraggableScrollableSheet(
               initialChildSize: sheetPosition, // 初期高さ
               minChildSize: 0.1, // 最小高さ
               maxChildSize: 1.0, // 最大高さ
-              builder: (BuildContext context, ScrollController scrollController) {
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -186,11 +195,11 @@ class _MapPageState extends State<MapPage> {
                             }
                           });
                         },
-                        onVerticalDragEnd: (DragEndDetails details){
+                        onVerticalDragEnd: (DragEndDetails details) {
                           setState(() {
-                            if (sheetPosition < 0.6){
+                            if (sheetPosition < 0.6) {
                               sheetPosition = 0.3;
-                            }else{
+                            } else {
                               sheetPosition = 0.95;
                             }
                           });
@@ -199,7 +208,8 @@ class _MapPageState extends State<MapPage> {
                       Expanded(
                         child: ListView(
                           controller: scrollController,
-                          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * 0.05),
                           children: [
                             if (selectedRestaurant != null) ...[
                               Text(
@@ -215,7 +225,8 @@ class _MapPageState extends State<MapPage> {
                                   ElevatedButton(
                                     child: const Text('経路'),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color.fromARGB(255, 81, 44, 242),
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 81, 44, 242),
                                       foregroundColor: Colors.white,
                                       shape: const StadiumBorder(),
                                     ),
@@ -245,7 +256,8 @@ class _MapPageState extends State<MapPage> {
                               SizedBox(height: 8.0),
                               Text('系統: ${selectedRestaurant!['cuisine']}'),
                               SizedBox(height: 8.0),
-                              Text('座標: (${selectedRestaurant!['lat']}, ${selectedRestaurant!['lon']})'),
+                              Text(
+                                  '座標: (${selectedRestaurant!['lat']}, ${selectedRestaurant!['lon']})'),
                               SizedBox(height: 16.0),
                               ElevatedButton(
                                 onPressed: () {
@@ -266,9 +278,8 @@ class _MapPageState extends State<MapPage> {
             ),
         ],
       ),
-      
       floatingActionButton: FloatingActionButton(
-        onPressed: () async{
+        onPressed: () async {
           // 現在地を取得するロジックをここに実装
           getCurrentPosition();
           mapController.move(currentLocation, 18.0);
@@ -288,7 +299,6 @@ class Grabber extends StatelessWidget {
 
   final ValueChanged<DragUpdateDetails> onVerticalDragUpdate;
   final ValueChanged<DragEndDetails> onVerticalDragEnd;
-
 
   @override
   Widget build(BuildContext context) {

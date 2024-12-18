@@ -14,8 +14,8 @@ class Eventcontroller {
       'type': event.type,
       'detail': event.detail,
       'storeId': event.storeId,
-      'twitterPost': event.twitterPost,
-      'instagramPost': event.instagramPost,
+      'twitter': event.twitter,
+      'instagram': event.instagram,
     });
   }
 
@@ -32,8 +32,8 @@ class Eventcontroller {
         type: doc['type'],
         detail: doc['detail'],
         storeId: doc['storeId'],
-        twitterPost: doc['twitterPost'],
-        instagramPost: doc['instagramPost'],
+        twitter: doc['twitter'],
+        instagram: doc['instagram'],
       );
     }
     return null;
@@ -49,8 +49,8 @@ class Eventcontroller {
       'type': event.type,
       'detail': event.detail,
       'storeId': event.storeId,
-      'twitterPost': event.twitterPost,
-      'instagramPost': event.instagramPost,
+      'twitter': event.twitter,
+      'instagram': event.instagram,
     });
   }
 
