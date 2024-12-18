@@ -11,8 +11,8 @@ class Event {
   final String? type;
   final String? detail;
   final String storeId;
-  final String? twitterPost;
-  final String? instagramPost;
+  final String? twitter;
+  final String? instagram;
 
   Event({
     required this.id,
@@ -23,8 +23,8 @@ class Event {
     this.type,
     this.detail,
     required this.storeId,
-    this.twitterPost,
-    this.instagramPost,
+    this.twitter,
+    this.instagram,
   });
 }
 
