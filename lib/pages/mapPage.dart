@@ -28,7 +28,6 @@ class _MapPageState extends State<MapPage> {
     getCurrentPosition();
     mapController = MapController();
   }
-
 //現在地情報の取得
   void getCurrentPosition() async {
     // 位置情報サービスが有効かどうかを確認
