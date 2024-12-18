@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-// import 'firebase_options.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
+  bool _isHiddenPassword = true;
   static final _googleSignin = GoogleSignIn(
     scopes: [
       'email',
@@ -35,7 +35,10 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextFormField( // for original email
-                decoration: const InputDecoration(labelText: 'Email address'),
+                decoration: const InputDecoration(
+                  icon: Icon(Icons.mail),  
+                  labelText: 'Email address'
+                ),
                 onChanged: (String value) {
                   setState(() {
                     _email = value;
@@ -43,7 +46,21 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               TextFormField( // for original password
-                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: _isHiddenPassword,
+                decoration: InputDecoration(
+                  icon: const Icon( Icons.lock),  
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isHiddenPassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isHiddenPassword = !_isHiddenPassword;
+                      });
+                    },
+                  ),
+                ),
                 onChanged: (String value) {
                   setState(() {
                     _password = value;
