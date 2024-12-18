@@ -47,27 +47,40 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(155, 0, 63, 1), // 指定された色
+        title: const Text(
+          'WaseMap',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white // ボールドフォント
+          ),
+        ),
+      ),
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
+            bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
+            icon: Icon(Icons.map, color: Colors.white), // アイコンの色を白に
             label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.white), // アイコンの色を白に
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu),
+            icon: Icon(Icons.menu, color: Colors.white), // アイコンの色を白に
             label: 'Detail',
           ),
         ],
+        backgroundColor: const Color.fromRGBO(155, 0, 63, 1), // えんじ色
+        selectedItemColor: Colors.white, // 選択されたアイテムの色を白に
+        unselectedItemColor: const Color.fromARGB(178, 255, 255, 255), // 未選択のアイテムの色を白に
       ),
     );
   }
