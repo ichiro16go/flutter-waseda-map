@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Center(
         child: Container(
-          padding: const EdgeInsets.all(24),
+          // padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -67,66 +67,95 @@ class _LoginPageState extends State<LoginPage> {
                   });
                 } ,
               ),
-              ElevatedButton( // fot login using original email
-                child: const Text('Login'),
-                onPressed: () async {
-                  try {
-                    final User? user = (
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
-                        email: _email, 
-                        password: _password
-                      )
+              SizedBox(
+                width: 300,
+                height: 30,
+                child:  ElevatedButton( // fot login using original email
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    backgroundColor: Colors.blue[300],
+                  ),
+                  onPressed: () async {
+                    try {
+                      final User? user = (
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
+                          email: _email, 
+                          password: _password
+                        )
+                      ).user;
+                      if (user == null) return;
+                      
+                      print('Succeded in logging in!\n hello, ${user.uid}');
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  child: const Text('Login'),
+                ),
+              ),
+              SizedBox(
+                width: 300,
+                height: 30,
+                child:  ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    backgroundColor: Colors.blue[300],
+                  ),
+                  onPressed: () async {
+                    GoogleSignInAccount? account = await _googleSignin.signIn();
+                    if (account == null) return;
+
+                    GoogleSignInAuthentication authentication = await account.authentication;
+                    final OAuthCredential credential = GoogleAuthProvider.credential(
+                      idToken: authentication.idToken,
+                      accessToken: authentication.accessToken,
+                    );
+                    User? user = (
+                      await FirebaseAuth.instance.signInWithCredential(credential)
                     ).user;
                     if (user == null) return;
                     
-                    print('Succeded in logging in!\n hello, ${user.uid}');
-                  } catch (e) {
-                    print(e);
-                  }
-                }
+                    print('succeeded in logging in with Google account: ${user.uid}');
+                    setState(() {
+                      // change Scene
+                    });
+                  }, 
+                  child: const Text('Login with Google'),
+                ),
               ),
-              ElevatedButton(
-                child: const Text('Login with Google'),
-                onPressed: () async {
-                  GoogleSignInAccount? account = await _googleSignin.signIn();
-                  if (account == null) return;
-
-                  GoogleSignInAuthentication authentication = await account.authentication;
-                  final OAuthCredential credential = GoogleAuthProvider.credential(
-                    idToken: authentication.idToken,
-                    accessToken: authentication.accessToken,
-                  );
-                  User? user = (
-                    await FirebaseAuth.instance.signInWithCredential(credential)
-                  ).user;
-                  if (user == null) return;
-                  
-                  print('succeeded in logging in with Google account: ${user.uid}');
-                  setState(() {
-                    // change Scene
-                  });
-                }, 
-              ),
-              ElevatedButton( // for new user resisration.
-                child: const Text('User resisration'),
-                onPressed: () async {
-                  try {
-                    final User? user = (
-                      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                        email: _email, 
-                        password: _password
-                      )
-                    ).user;
-                    if (user != null) {
-                      print("Succeeded in resitering you as our user!\n email: ${user.email}, id: ${user.uid}");
+              SizedBox(
+                width: 300,
+                height: 30,
+                child:  ElevatedButton( // for new user resisration.
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    backgroundColor: Colors.blue[300],
+                  ),
+                  child: const Text('User resisration'),
+                  onPressed: () async {
+                    try {
+                      final User? user = (
+                        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                          email: _email, 
+                          password: _password
+                        )
+                      ).user;
+                      if (user != null) {
+                        print("Succeeded in resitering you as our user!\n email: ${user.email}, id: ${user.uid}");
+                      }
+                    } catch (e) {
+                      print(e);
                     }
-                  } catch (e) {
-                    print(e);
                   }
-                }
-              )
+                )
+              ),
             ],
-
           ),
         )
       ),
