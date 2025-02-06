@@ -284,7 +284,8 @@ class _MapPageState extends State<MapPage> {
           getCurrentPosition();
           mapController.move(currentLocation, 18.0);
         },
-        child: const Icon(Icons.my_location),
+        backgroundColor: const Color.fromRGBO(155, 0, 63, 1),
+        child: const Icon(Icons.my_location,color: Colors.white,),
       ),
     );
   }

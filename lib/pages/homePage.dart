@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../type/type.dart';
 import '../compornents/timelineChips.dart';
+import '../compornents/postButton.dart';
 import '../testData/testData.dart';
+import '../pages/postPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,6 +24,10 @@ class _HomePageState extends State<HomePage> {
           return Timelinechips(
               event: _posts[index], event_photos: photos[index]);
         },
+      ),
+      floatingActionButton: const Align(
+        alignment: Alignment.bottomRight,
+        child: PostButton(),
       ),
     );
   }

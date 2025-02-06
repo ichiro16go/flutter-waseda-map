@@ -12,7 +12,12 @@
           "package_name": "com.wasemap.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "135356959595-pl9t0g88rquh3k13ba5gpdpbpe7634sa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAjsdCfiShr64gnqdEfotPMCuDzVP0sMo0"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "135356959595-pl9t0g88rquh3k13ba5gpdpbpe7634sa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "135356959595-34qjtckdkaht8tj9dttin0lgqcke3tng.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.waseMap"
+              }
+            }
+          ]
         }
       }
     }
